@@ -27,13 +27,19 @@ function run() {
     parser.parseString(data, attempt(function (err, result) {
         if (err) throw err;
         var version, plugins = result.widget.plugin;
-        for (var n = 0, len = plugins.length; n < len; n++) {
-            var plugin = plugins[n];
-            if (plugin.$.name === PLUGIN_NAME && plugin.variable && plugin.variable.length > 0) {
-                version = plugin.variable.pop().$.value;
-                break;
+        log("PLUGINS", plugins);
+        log("RESULT", result);
+        
+        if (plugins) {
+            for (var n = 0, len = plugins.length; n < len; n++) {
+                var plugin = plugins[n];
+                if (plugin.$.name === PLUGIN_NAME && plugin.variable && plugin.variable.length > 0) {
+                    version = plugin.variable.pop().$.value;
+                    break;
+                }
             }
         }
+        
         if (version) {
             var contents = fs.readFileSync(GRADLE_FILENAME).toString();
             fs.writeFileSync(GRADLE_FILENAME, contents.replace(PACKAGE_PATTERN, "$1" + version + '"'), 'utf8');
